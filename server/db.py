@@ -21,4 +21,4 @@ class DB:
                 DB.cursor = DB.connection.cursor(dictionary=True)
             return DB.connection, DB.cursor
         except mysql.connector.Error as err:
-            raise("Error connecting to DB: {}".format(err))
+            print("Error connecting to DB: {}".format(err))

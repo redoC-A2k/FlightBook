@@ -1,40 +1,12 @@
 from app import app
-from flask import make_response, request
+from flask import request
 from db import DB
 import jwt
 import os
-from functools import wraps
 import bcrypt
+from . import respond, user_token_required
 
 connection, cursor = DB.getDB()
-
-
-def respond(message, payload, status_code):
-    if payload is None:
-        return make_response({"message": message}, status_code)
-    else:
-        return make_response({"message": message, "payload": payload}, status_code)
-
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        if "Authorization" in request.headers:
-            token = request.headers["Authorization"].split(" ")[1]
-        if not token:
-            return respond("Token is missing", None, 401)
-        try:
-            data = jwt.decode(token, os.environ.get("JWT_SECRET"))
-            userId = data["id"]
-
-        except Exception as e:
-            return respond("Token is invalid", None, 403)
-
-        return f(userId, *args, **kwargs)
-
-    return decorated
-
 
 @app.route("/users/signup", methods=["POST"])
 def signup():
@@ -70,3 +42,40 @@ def signin():
         return respond("User signed in successfully", token, 200)
     else:
         return respond("Invalid username or password", None, 404)
+
+
+@app.route("/users/flights/book", methods=["POST"])
+@user_token_required
+def bookFlight(user):
+    try:
+        data = request.get_json()
+        flightNumber = data.get("flight_number")
+        cursor.execute(f"SELECT * FROM flights WHERE flight_number = '{flightNumber}'")
+        flight = cursor.fetchone()
+        if flight is None:
+            return respond("Invalid flight number", None, 404)
+        if flight["seat_count"] == 0:
+            return respond("No seats available", None, 400)
+        cursor.execute(
+            f"INSERT INTO bookings (user_id, flight_number) VALUES ('{user['id']}', '{flightNumber}')"
+        )
+        cursor.execute(
+            f"UPDATE flights SET seat_count = seat_count - 1 WHERE flight_number = '{flightNumber}'",
+        )
+        connection.commit()
+        return respond("Flight booked successfully", None, 200)
+    except Exception as err:
+        print("Error occured : Flight booking", err)
+        return respond("Error occured : Flight booking", None, 500)
+
+
+@app.route("/users/bookings")
+@user_token_required
+def getUserBookings(user):
+    try:
+        cursor.execute(f"SELECT * FROM bookings WHERE user_id = '{user['id']}'")
+        bookings = cursor.fetchall()
+        return respond("Bookings fetched successfully", bookings, 200)
+    except Exception as err:
+        print("Error occured : Fetching bookings", err)
+        return respond("Error occured : Fetching bookings", None, 500)
