@@ -57,11 +57,13 @@ def deleteFlight(admin, flight_number):
 @admin_token_required
 def getAFlight(admin, flight_number):
     try:
+        print(f"SELECT * FROM flights WHERE flight_number = {flight_number}")
         cursor.execute(f"SELECT * FROM flights WHERE flight_number = {flight_number}")
         flight = cursor.fetchone()
         flight["date"] = str(flight["date"])
         flight['time'] = str(flight['time'])
-        return respond("Flight retrieved successfully", flight, 200)
+        flightArr = [flight]
+        return respond("Flight retrieved successfully", flightArr, 200)
     except Exception as e:
-        print("Error while retrieving flight", e)
-        return respond("Error while retrieving flight", None, 500)
+        print("Error while retrieving flight (flight number does not exist)", e)
+        return respond("Flight number does not exist", [], 200)

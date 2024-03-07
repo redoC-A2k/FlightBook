@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react'
+import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
-function Signin({ token, setToken }: { token: string | null, setToken: React.Dispatch<React.SetStateAction<string | null>> }) {
+function Signup({ token, setToken }: { token: string | null, setToken: React.Dispatch<React.SetStateAction<string | null>> }) {
     const [formData, setFormData] = useState({
         email: "",
-        username: "",
         password: "",
+        username: ""
     })
     const [errors, setErrors] = useState({
         email: "",
         password: ""
     })
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+
         if (!e.target.checkValidity()) {
             if (e.target.name === 'email')
                 setErrors({ ...errors, email: 'Please enter valid email ' })
@@ -41,21 +42,19 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
             setErrors({ ...errors, password: 'Password cannot be empty' })
         } else {
             try {
+
                 formData.username = formData.email
-                let promise = axios.post(`${process.env.REACT_APP_BACKEND}/users/signin`, formData)
+                let promise = axios.post(`${process.env.REACT_APP_BACKEND}/users/signup`, formData)
                 toast.promise(promise, {
-                    loading: 'Signing in ...',
-                    success: 'Signin successful',
-                    error: 'Invalid email or password',
+                    loading: 'Creating Account ...',
+                    success: 'Sign in with new credentials',
+                    error: 'Error in signing you up',
                 })
-                let response = await promise;
-                let token = response.data.payload
-                localStorage.clear()
-                localStorage.setItem("token", token)
-                setToken(token)
-            } catch (error: any) {
-                let axiosError: AxiosError = error;
-                if (axiosError.response && axiosError.response.data) {
+                await promise;
+                navigate('/signin')
+            } catch (error:any) {
+                let axiosError:AxiosError = error;
+                if(axiosError.response && axiosError.response.data){
                     console.log(axiosError.response.data)
                 } else console.log(axiosError)
             }
@@ -63,7 +62,7 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
     }
 
     return (
-        <section className='auth' id="login">
+        <section className="auth" id="signup">
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-12">
@@ -79,13 +78,13 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
                                 <span>{errors.password}</span>
                             </div>
                             <div>
-                                <Link to="/signup"><b>Create new account</b></Link>
+                                <Link to="/signin"><b>Already have an account?</b></Link>
                             </div>
                             <div>
                                 <Link to="/admin/signin"><b>Are you admin ?</b></Link>
                             </div>
                             <div className="text-center">
-                                <button type="submit" ><b>SIGNIN </b></button>
+                                <button type="submit" className='cta'><b>Signup</b></button>
                             </div>
                         </form>
                     </div>
@@ -94,4 +93,4 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
         </section>
     )
 }
-export default Signin
+export default Signup

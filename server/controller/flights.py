@@ -25,19 +25,24 @@ def getFlights(id):
 
 @app.route("/flights/search/date/<date>/time/<time>")
 @app.route("/flights/search/date/<date>")
-@app.route("/flights/search/time/<date>")
+@app.route("/flights/search/time/<time>")
 @token_required
 def searchFlights(id, date=None, time=None):
     print("date", date, "time", time)
-    if date is not None and time is not None:
-        cursor.execute(f"SELECT * FROM flights WHERE date = '{date}' AND time = '{time}'")
-    elif date is not None:
-        cursor.execute(f"SELECT * FROM flights WHERE date = '{date}'")
-    elif time is not None:
-        cursor.execute(f"SELECT * FROM flights WHERE time = '{time}'")
-    flights = cursor.fetchall()
-    for flight in flights:
-        flight["time"] = str(flight["time"])
-        flight["date"] = str(flight["date"])
-    return respond("Flights fetched successfully", flights, 200)
-
+    try:
+        if date is not None and time is not None:
+            cursor.execute(
+                f"SELECT * FROM flights WHERE date = '{date}' AND time = '{time}'"
+            )
+        elif date is not None:
+            cursor.execute(f"SELECT * FROM flights WHERE date = '{date}'")
+        elif time is not None:
+            cursor.execute(f"SELECT * FROM flights WHERE time = '{time}'")
+        flights = cursor.fetchall()
+        for flight in flights:
+            flight["time"] = str(flight["time"])
+            flight["date"] = str(flight["date"])
+        return respond("Flights fetched successfully", flights, 200)
+    except Exception as e:
+        print("error while retrieving flights :", e)
+        return respond("No flights found", [], 200)

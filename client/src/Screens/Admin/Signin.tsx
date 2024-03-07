@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
-import axios, { AxiosError } from 'axios'
-import { Link, useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
-function Signin({ token, setToken }: { token: string | null, setToken: React.Dispatch<React.SetStateAction<string | null>> }) {
+function Signin({ token, setToken, isAdmin, setIsAdmin }: { token: string | null, setToken: React.Dispatch<React.SetStateAction<string | null>>, isAdmin: boolean, setIsAdmin: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [formData, setFormData] = useState({
         email: "",
         username: "",
@@ -13,8 +13,6 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
         email: "",
         password: ""
     })
-
-    const navigate = useNavigate();
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (!e.target.checkValidity()) {
@@ -42,17 +40,19 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
         } else {
             try {
                 formData.username = formData.email
-                let promise = axios.post(`${process.env.REACT_APP_BACKEND}/users/signin`, formData)
+                let promise = axios.post(`${process.env.REACT_APP_BACKEND}/admin/signin`, formData)
                 toast.promise(promise, {
                     loading: 'Signing in ...',
                     success: 'Signin successful',
-                    error: 'Invalid email or password',
+                    error: 'Invalid email or passsword',
                 })
                 let response = await promise;
                 let token = response.data.payload
                 localStorage.clear()
                 localStorage.setItem("token", token)
+                localStorage.setItem("isAdmin","true")
                 setToken(token)
+                setIsAdmin(true)
             } catch (error: any) {
                 let axiosError: AxiosError = error;
                 if (axiosError.response && axiosError.response.data) {
@@ -79,10 +79,7 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
                                 <span>{errors.password}</span>
                             </div>
                             <div>
-                                <Link to="/signup"><b>Create new account</b></Link>
-                            </div>
-                            <div>
-                                <Link to="/admin/signin"><b>Are you admin ?</b></Link>
+                                <Link to="/signin"><b>Are you user ?</b></Link>
                             </div>
                             <div className="text-center">
                                 <button type="submit" ><b>SIGNIN </b></button>
@@ -94,4 +91,4 @@ function Signin({ token, setToken }: { token: string | null, setToken: React.Dis
         </section>
     )
 }
-export default Signin
+export default Signin;
