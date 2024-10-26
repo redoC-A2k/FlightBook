@@ -1,0 +1,9 @@
+services:
+  network-config:
+    networks:
+      - flightbook-network
+
+  db-config:
+    image: mysql:8.0.30
+    extends:
+      service: network-config
