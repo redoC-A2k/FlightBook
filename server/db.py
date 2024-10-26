@@ -10,7 +10,6 @@ class DB:
     def getDB():
         try:
             if DB.connection is None or DB.cursor is None:
-                print("Connecting to database")
                 # Connect to MySQL database
                 DB.connection = mysql.connector.connect(
                     host=os.environ.get("MYSQL_HOST"),
@@ -18,6 +17,7 @@ class DB:
                     password=os.environ.get("MYSQL_PASSWORD"),
                     database=os.environ.get("MYSQL_DATABASE"),
                 )
+                print("Connected to MySQL database")
                 DB.cursor = DB.connection.cursor(dictionary=True)
             return DB.connection, DB.cursor
         except mysql.connector.Error as err:

@@ -2,6 +2,10 @@ from flask import Flask
 app = Flask(__name__)
 import os
 
+if(os.environ.get('FLASK_ENV') == 'development'):
+    from dotenv import load_dotenv 
+    load_dotenv()
+
 @app.route('/')
 def root():
     return "Welcome to Flight Ticket Booking System!"
