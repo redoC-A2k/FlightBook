@@ -4,6 +4,7 @@
 1. ``` git clone ```
 2. ``` cd FlightBook/docker ```
 3. ``` docker compose up ```
+4. Open localhost:8080
 
 # 📁 Collection: Users 
 
