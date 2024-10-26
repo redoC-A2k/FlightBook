@@ -169,7 +169,7 @@ section.auth {
 section.auth::before {
   content: ' ';
   position: absolute;
-  background-image: url(http://localhost:3000/assets/background.png);
+  background-image: url(https://flights-book-web.netlify.app/assets/background.png);
   height: 100vh;
   width: 100vw;
   opacity: 0.3;

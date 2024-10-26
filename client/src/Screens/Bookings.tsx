@@ -4,11 +4,11 @@ import toast from "react-hot-toast";
 
 function Bookings({ token }: { token: string | null }) {
     const [bookings, setBookings] = useState([])
-
+    const backEndUrl = process.env.REACT_APP_BACKEND
     async function fetchBookings() {
         if (token) {
             try {
-                let promise = axios.get(`${process.env.REACT_APP_BACKEND}/users/bookings`, {
+                let promise = axios.get(`${backEndUrl}/users/bookings`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

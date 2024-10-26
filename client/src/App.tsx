@@ -15,24 +15,26 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin") === "true" ? true : false)
 
   useEffect(() => {
+    const backEndUrl = process.env.REACT_APP_BACKEND
+    const frontEndUrl = process.env.REACT_APP_FRONTEND
     if (isAdmin === false) {
       console.log(token)
-      console.log(`${process.env.REACT_APP_FRONTEND}/signin`)
+      console.log(`${frontEndUrl}/signin`)
       console.log(
-        window.location.href === `${process.env.REACT_APP_FRONTEND}/signin` ||
-        window.location.href === `${process.env.REACT_APP_FRONTEND}/signup`)
+        window.location.href === `${frontEndUrl}/signin` ||
+        window.location.href === `${frontEndUrl}/signup`)
       if (token &&
-        (window.location.href === `${process.env.REACT_APP_FRONTEND}/signin` ||
-          window.location.href === `${process.env.REACT_APP_FRONTEND}/signup`)) {
+        (window.location.href === `${frontEndUrl}/signin` ||
+          window.location.href === `${frontEndUrl}/signup`)) {
         navigate('/')
       } else if(!token) navigate('/signin')
     } else {
       console.log(
-        window.location.href === `${process.env.REACT_APP_FRONTEND}/signin` ||
-        window.location.href === `${process.env.REACT_APP_FRONTEND}/signup`)
+        window.location.href === `${frontEndUrl}/signin` ||
+        window.location.href === `${frontEndUrl}/signup`)
       if (token &&
-        (window.location.href === `${process.env.REACT_APP_FRONTEND}/admin/signin` ||
-          window.location.href === `${process.env.REACT_APP_FRONTEND}/admin/signup`)) {
+        (window.location.href === `${frontEndUrl}/admin/signin` ||
+          window.location.href === `${frontEndUrl}/admin/signup`)) {
         navigate('/')
       } else if(!token) navigate('/signin')
     }
