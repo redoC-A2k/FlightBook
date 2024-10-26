@@ -1,5 +1,10 @@
 # Project: Flight Booking
 
+# Run locally
+1. ``` git clone ```
+2. ``` cd FlightBook/docker ```
+3. ``` docker compose up ```
+
 # 📁 Collection: Users 
 
 
